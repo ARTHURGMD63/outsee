@@ -1,0 +1,36 @@
+# Environnement local
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+
+# Dépendances et fichiers générés
+/vendor/
+/var/
+/public/bundles/
+/public/assets/
+/assets/vendor/
+
+# Fichiers déposés par les utilisateurs
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# Outils
+/coverage/
+
+# Éditeurs et systèmes
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+~$*
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
