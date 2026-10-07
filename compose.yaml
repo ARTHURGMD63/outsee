@@ -4,7 +4,12 @@ services:
   app:
     build: ./docker/php
     ports: ["8080:80"]
-    volumes: [".:/var/www/html"]
+    volumes:
+      - .:/var/www/html
+      # Dépendances et cache restent dans des volumes Docker : sur Windows,
+      # les lire à travers le montage du dossier rend chaque page très lente.
+      - app_vendor:/var/www/html/vendor
+      - app_var:/var/www/html/var
     depends_on: [db, mongo, mailpit]
 
   db:
@@ -28,5 +33,7 @@ services:
     ports: ["8025:8025"]
 
 volumes:
+  app_vendor:
+  app_var:
   db_data:
   mongo_data:
