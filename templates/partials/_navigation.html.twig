@@ -1,0 +1,17 @@
+{% set route = app.current_route %}
+{% set onglets = [
+    {route: 'evenement_liste', libelle: 'Explorer', icone: 'loupe'},
+    {route: 'squad_liste', libelle: 'Sport', icone: 'trophee'},
+    {route: 'pass', libelle: 'Pass', icone: 'pass'},
+    {route: 'profil', libelle: 'Moi', icone: 'personne'},
+] %}
+<nav class="bottom-nav" aria-label="Navigation principale">
+    <span class="nav-marque" aria-hidden="true">{{ include('partials/_marque.html.twig') }}</span>
+    {% for onglet in onglets %}
+        {% set actif = route starts with onglet.route|split('_')|first %}
+        <a href="{{ path(onglet.route) }}" class="nav-item{{ actif ? ' active' }}"{% if actif %} aria-current="page"{% endif %}>
+            <span class="nav-icon">{{ icone(onglet.icone) }}</span>
+            <span>{{ onglet.libelle }}</span>
+        </a>
+    {% endfor %}
+</nav>

@@ -1,24 +1,39 @@
 <!DOCTYPE html>
-<html>
+{# « univers » : la nuit pour les étudiants (thème au choix), le jour pour les pros (toujours clair). #}
+{% set univers = univers|default('etudiant') %}
+{% set theme = univers == 'pro' ? 'light' : (app.user ? app.user.theme.value : 'dark') %}
+<html lang="fr" data-theme="{{ theme }}">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
-
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Outsee{% endblock %} · Outsee</title>
+        <meta name="description" content="{% block description %}Les meilleures sorties étudiantes de Clermont-Ferrand, avec des réductions réservées aux membres.{% endblock %}">
+        <meta name="theme-color" content="{{ theme == 'dark' ? '#111013' : '#F5F1E8' }}">
+        <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+        <link rel="preload" href="{{ asset('fonts/unbounded-latin.woff2') }}" as="font" type="font/woff2" crossorigin>
+        <link rel="preload" href="{{ asset('fonts/instrument-sans-latin.woff2') }}" as="font" type="font/woff2" crossorigin>
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
-
-        {% set frankenphp_hot_reload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-        {% if frankenphp_hot_reload %}
-        <meta name="frankenphp-hot-reload:url" content="{{ frankenphp_hot_reload }}">
-        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
-        {% endif %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <a class="sr-only" href="#main-content">Aller au contenu</a>
+
+        {% block body %}
+            <div class="app-shell">
+                {% block entete %}{% endblock %}
+
+                <main id="main-content" class="page-content">
+                    {{ include('partials/_messages.html.twig') }}
+                    {% block contenu %}{% endblock %}
+                </main>
+            </div>
+
+            {% block navigation %}
+                {% if is_granted('ROLE_ETUDIANT') %}
+                    {{ include('partials/_navigation.html.twig') }}
+                {% endif %}
+            {% endblock %}
+        {% endblock %}
     </body>
 </html>

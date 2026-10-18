@@ -1,0 +1,8 @@
+{# En-tête de page : titre en deux lignes, la seconde en italique, comme sur la charte. #}
+<header class="page-header">
+    {% if surtitre is defined and surtitre %}<p class="salut">{{ surtitre }}</p>{% endif %}
+    <h1 class="titre-page">
+        <span class="display" style="display:block;font-size:var(--fs-8);line-height:var(--lh-tight);">{{ ligne1 }}</span>
+        <span class="display-italic" style="display:block;font-size:var(--fs-8);line-height:var(--lh-tight);">{{ ligne2 }}</span>
+    </h1>
+</header>
