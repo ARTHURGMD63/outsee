@@ -11,4 +11,14 @@ enum NiveauSquad: string
     case Debutant = 'debutant';
     case Intermediaire = 'inter';
     case Avance = 'avance';
+
+    public function libelle(): string
+    {
+        return match ($this) {
+            self::Tous => 'Tous niveaux',
+            self::Debutant => 'Débutant',
+            self::Intermediaire => 'Intermédiaire',
+            self::Avance => 'Avancé',
+        };
+    }
 }

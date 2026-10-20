@@ -1,12 +1,14 @@
-# see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     secret: '%env(APP_SECRET)%'
 
-    # Note that the session will be started ONLY if you read or write from it.
-    session: true
-
-    #esi: true
-    #fragments: true
+    # Sessions rangées avec l'application : elles survivent à un redémarrage
+    # du serveur, et le cookie n'est jamais lisible par JavaScript.
+    session:
+        handler_id: null
+        save_path: '%kernel.project_dir%/var/sessions/%kernel.environment%'
+        cookie_secure: auto
+        cookie_samesite: lax
+        cookie_httponly: true
 
 when@test:
     framework:

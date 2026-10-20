@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mot de passe oublié{% endblock %}
+
+{% block body %}
+    <main id="main-content" class="auth-page">
+        <div class="auth-logo">{{ include('partials/_marque.html.twig', {lien: path('accueil')}) }}</div>
+
+        <h1 class="auth-headline titre-page">
+            <span class="display" style="font-size:var(--fs-8);">Mot de passe</span>
+            <span class="display-italic" style="font-size:var(--fs-8);">oublié ?</span>
+        </h1>
+
+        {{ include('partials/_messages.html.twig') }}
+
+        <p class="aide-champ" style="margin-bottom:20px;">Indique ton adresse : tu recevras un lien pour choisir un nouveau mot de passe.</p>
+
+        {{ form_start(formulaire) }}
+            {{ form_row(formulaire.email) }}
+            <button type="submit" class="btn btn-primary btn-full">Recevoir le lien</button>
+        {{ form_end(formulaire) }}
+
+        <p class="auth-link"><a href="{{ path('connexion') }}">Retour à la connexion</a></p>
+    </main>
+{% endblock %}

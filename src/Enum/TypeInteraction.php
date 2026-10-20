@@ -13,4 +13,16 @@ enum TypeInteraction: string
     case Demo = 'demo';
     case Relance = 'relance';
     case Note = 'note';
+
+    public function libelle(): string
+    {
+        return match ($this) {
+            self::Appel => 'Appel',
+            self::Visite => 'Visite',
+            self::Email => 'E-mail',
+            self::Demo => 'Démo',
+            self::Relance => 'Relance',
+            self::Note => 'Note',
+        };
+    }
 }

@@ -1,0 +1,8 @@
+framework:
+    rate_limiter:
+        # Demandes de lien « mot de passe oublié » : trois par heure et par IP,
+        # pour qu'on ne puisse pas inonder la boîte mail de quelqu'un.
+        reinitialisation:
+            policy: fixed_window
+            limit: 3
+            interval: '1 hour'

@@ -11,4 +11,14 @@ enum TypeLieu: string
     case Boite = 'boite';
     case Resto = 'resto';
     case Afterwork = 'afterwork';
+
+    public function libelle(): string
+    {
+        return match ($this) {
+            self::Bar => 'Bar',
+            self::Boite => 'Boîte de nuit',
+            self::Resto => 'Restaurant',
+            self::Afterwork => 'Afterwork',
+        };
+    }
 }
