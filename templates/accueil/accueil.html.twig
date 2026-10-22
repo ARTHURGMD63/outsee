@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sorties étudiantes à Clermont-Ferrand{% endblock %}
+
+{% block entete %}
+    <header class="page-header">
+        {{ include('partials/_marque.html.twig') }}
+        <h1 class="titre-page" style="margin-top:32px;">
+            <span class="display" style="display:block;font-size:var(--fs-9);line-height:var(--lh-tight);">Sors plus,</span>
+            <span class="display-italic" style="display:block;font-size:var(--fs-9);line-height:var(--lh-tight);">paie moins.</span>
+        </h1>
+        <p class="texte-doux" style="margin-top:16px;font-size:var(--fs-5);">
+            Les bars, boîtes et restos de Clermont réservent leurs meilleures offres aux étudiants Outsee.
+            Réserve ta place, présente ton pass à l'entrée, et retrouve tes potes en squad.
+        </p>
+        <div class="pile" style="margin-top:24px;">
+            <a class="btn btn-primary btn-full" href="{{ path('inscription') }}">Créer mon compte</a>
+            <a class="btn btn-full" href="{{ path('connexion') }}">J'ai déjà un compte</a>
+        </div>
+    </header>
+{% endblock %}
+
+{% block contenu %}
+    {% if evenements is not empty %}
+        <h2 class="pass-list-header" style="margin-top:24px;">Bientôt à Clermont</h2>
+        <div class="pile">
+            {% for evenement in evenements %}
+                {{ include('evenement/_carte.html.twig') }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <p class="texte-doux" style="margin-top:32px;text-align:center;">
+        Tu gères un bar ou une boîte ? <a href="{{ path('inscription') }}">Deviens partenaire</a>.
+    </p>
+{% endblock %}

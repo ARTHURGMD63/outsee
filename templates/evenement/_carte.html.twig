@@ -1,0 +1,36 @@
+{# Carte d'un événement dans une liste. #}
+<article class="event-card event-card-regular type-{{ evenement.type.value }}">
+    <div class="event-entete">
+        <div class="event-entete__meta">
+            <span class="event-meta">{{ evenement.type.libelle|upper }} · {{ evenement.dateHeure|format_datetime(pattern: 'EEE d MMM, HH:mm', locale: 'fr') }}</span>
+            {% if evenement.styleMusique %}
+                <span class="badge badge-musique">{{ icone('musique', 'icon-sm') }}{{ evenement.styleMusique.libelle }}</span>
+            {% endif %}
+            {% if evenement.gratuit %}<span class="badge badge-gratuit">GRATUIT</span>{% endif %}
+            {% if evenement.flash %}<span class="badge badge-flash">FLASH</span>{% endif %}
+            {% if evenement.sponsoriseActif %}<span class="badge badge-sponsorise">Sponsorisé</span>{% endif %}
+        </div>
+    </div>
+
+    <a class="lien-carte" href="{{ path('evenement_detail', {id: evenement.id}) }}">
+        <h2 class="event-title" style="font-size:var(--fs-6);">{{ evenement.titre }}</h2>
+        <p class="event-lieu">{{ evenement.etablissement.nom }}</p>
+        {% if evenement.description %}
+            <p class="texte-doux" style="margin:12px 0;">{{ evenement.description|u.truncate(110, '…', false) }}</p>
+        {% endif %}
+    </a>
+
+    <div class="ligne">
+        <span class="texte-doux">
+            {% if evenement.gratuit %}
+                Entrée libre
+            {% elseif evenement.reduction > 0 %}
+                <s>{{ evenement.prixNormal|format_currency('EUR', locale: 'fr') }}</s>
+                <strong>{{ evenement.prixMembre|format_currency('EUR', locale: 'fr') }}</strong> avec ton pass
+            {% else %}
+                {{ evenement.prixNormal|format_currency('EUR', locale: 'fr') }}
+            {% endif %}
+        </span>
+        <a class="btn btn-primary" style="padding:8px 18px;font-size:var(--fs-3);" href="{{ path('evenement_detail', {id: evenement.id}) }}">Voir</a>
+    </div>
+</article>

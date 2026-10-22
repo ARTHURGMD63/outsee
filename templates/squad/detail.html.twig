@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ squad.titre }}{% endblock %}
+
+{% block entete %}
+    <header class="page-header">
+        <a class="back" href="{{ path('squad_liste') }}">{{ icone('fleche-g', 'icon-sm') }} Retour</a>
+        <p class="event-meta" style="margin-top:16px;">{{ squad.type.libelle|upper }} · {{ squad.niveau.libelle }}{{ squad.creeParAssociation ? ' · Association' }}</p>
+        <h1 class="display" style="font-size:var(--fs-8);line-height:var(--lh-tight);">{{ squad.titre }}</h1>
+    </header>
+{% endblock %}
+
+{% block contenu %}
+    <section class="card pile">
+        <p class="with-icon">{{ icone('calendrier', 'icon-sm') }}{{ squad.dateHeure|format_datetime(pattern: "EEEE d MMMM 'à' HH'h'mm", locale: 'fr')|capitalize }}</p>
+        {% if squad.lieu %}<p class="with-icon">{{ icone('epingle', 'icon-sm') }}{{ squad.lieu }}</p>{% endif %}
+        <p class="with-icon">{{ icone('personne', 'icon-sm') }}Proposée par {{ squad.createur.prenom }}</p>
+        {% if squad.description %}<p style="white-space:pre-line;">{{ squad.description }}</p>{% endif %}
+    </section>
+
+    <h2 class="pass-list-header" style="margin-top:24px;">Participants ({{ squad.membres|length }} / {{ squad.quota }})</h2>
+    <ul class="pile" style="list-style:none;padding:0;">
+        {% for membre in squad.membres %}
+            <li class="pass-item"><span class="pass-item-name">{{ membre.utilisateur.prenom }} {{ membre.utilisateur.nom|first }}.</span></li>
+        {% endfor %}
+    </ul>
+
+    {% if is_granted('ROLE_ETUDIANT') %}
+        {% set membre = squad.estMembre(app.user) %}
+        {% if not membre or squad.createur != app.user %}
+            <form method="post" action="{{ path(membre ? 'squad_quitter' : 'squad_rejoindre', {id: squad.id}) }}" style="margin-top:20px;">
+                <input type="hidden" name="_token" value="{{ csrf_token('squad') }}">
+                {% if membre %}
+                    <button class="btn btn-full" type="submit">Quitter la squad</button>
+                {% else %}
+                    <button class="btn btn-primary btn-full" type="submit" {{ squad.estComplete ? 'disabled' }}>{{ squad.estComplete ? 'Complet' : 'Rejoindre' }}</button>
+                {% endif %}
+            </form>
+        {% endif %}
+    {% endif %}
+{% endblock %}

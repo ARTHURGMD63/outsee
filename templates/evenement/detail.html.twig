@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ evenement.titre }}{% endblock %}
+{% block description %}{{ evenement.description|default('')|u.truncate(150, '…') }}{% endblock %}
+
+{% set restantes = max(0, evenement.quota - places_prises) %}
+
+{% block entete %}
+    <header class="page-header">
+        <a class="back" href="{{ path('evenement_liste') }}">{{ icone('fleche-g', 'icon-sm') }} Retour</a>
+        <p class="event-meta" style="margin-top:16px;">{{ evenement.type.libelle|upper }} · {{ evenement.etablissement.nom }}</p>
+        <h1 class="display" style="font-size:var(--fs-8);line-height:var(--lh-tight);">{{ evenement.titre }}</h1>
+    </header>
+{% endblock %}
+
+{% block contenu %}
+    <section class="card pile">
+        <p class="with-icon">{{ icone('calendrier', 'icon-sm') }}
+            {{ evenement.dateHeure|format_datetime(pattern: "EEEE d MMMM 'à' HH'h'mm", locale: 'fr')|capitalize }}
+            {% if evenement.dateFin %} jusqu'à {{ evenement.dateFin|date('H\\hi') }}{% endif %}
+        </p>
+        {% if evenement.lieu %}<p class="with-icon">{{ icone('epingle', 'icon-sm') }}{{ evenement.lieu }}</p>{% endif %}
+        {% if evenement.styleMusique %}<p class="with-icon">{{ icone('musique', 'icon-sm') }}{{ evenement.styleMusique.libelle }}</p>{% endif %}
+        <p class="with-icon">{{ icone('personnes', 'icon-sm') }}{{ places_prises }} / {{ evenement.quota }} places prises</p>
+
+        <div class="progress-bar" aria-hidden="true">
+            <div class="progress-bar-fill dark" style="width:{{ evenement.quota > 0 ? min(100, (places_prises / evenement.quota * 100)|round) : 0 }}%"></div>
+        </div>
+
+        <p>
+            {% if evenement.gratuit %}
+                <strong>Entrée gratuite</strong>
+            {% elseif evenement.reduction > 0 %}
+                <s class="texte-doux">{{ evenement.prixNormal|format_currency('EUR', locale: 'fr') }}</s>
+                <strong>{{ evenement.prixMembre|format_currency('EUR', locale: 'fr') }}</strong>
+                avec ton pass : tu économises {{ evenement.economie|format_currency('EUR', locale: 'fr') }}
+            {% else %}
+                <strong>{{ evenement.prixNormal|format_currency('EUR', locale: 'fr') }}</strong>
+            {% endif %}
+        </p>
+    </section>
+
+    {% if evenement.description %}
+        <section class="card" style="margin-top:14px;">
+            <p style="white-space:pre-line;">{{ evenement.description }}</p>
+        </section>
+    {% endif %}
+
+    <div style="margin-top:20px;">
+        {% if inscription %}
+            <a class="btn btn-primary btn-full" href="{{ path('pass') }}">{{ icone('billet', 'icon-sm') }} Voir mon pass</a>
+            {% if inscription.statut.value == 'inscrit' %}
+                <form method="post" action="{{ path('evenement_annuler', {id: evenement.id}) }}" style="margin-top:10px;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('annuler') }}">
+                    <button class="btn btn-full" type="submit">Annuler ma réservation</button>
+                </form>
+            {% endif %}
+        {% elseif evenement.estPasse %}
+            <p class="vide">Cet événement est terminé.</p>
+        {% elseif is_granted('ROLE_ETUDIANT') %}
+            <form method="post" action="{{ path('evenement_reserver', {id: evenement.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('reserver') }}">
+                <button class="btn btn-primary btn-full" type="submit" {{ restantes == 0 ? 'disabled' }}>
+                    {{ restantes == 0 ? 'Complet' : 'Réserver ma place' }}
+                </button>
+            </form>
+        {% elseif not app.user %}
+            <a class="btn btn-primary btn-full" href="{{ path('connexion') }}">Se connecter pour réserver</a>
+        {% endif %}
+    </div>
+
+    {% if peut_noter %}
+        <section class="card" style="margin-top:20px;">
+            <h2 style="font-size:var(--fs-6);margin-bottom:12px;">Ton avis sur la soirée</h2>
+            <form method="post" action="{{ path('evenement_avis', {id: evenement.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('avis') }}">
+                <div class="form-group">
+                    <label for="note">Note</label>
+                    <select id="note" name="note" required>
+                        {% for n in 5..1 %}<option value="{{ n }}">{{ n }} / 5</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="commentaire">Commentaire (facultatif)</label>
+                    <textarea id="commentaire" name="commentaire" maxlength="1000"></textarea>
+                </div>
+                <button class="btn btn-primary" type="submit">Envoyer</button>
+            </form>
+        </section>
+    {% endif %}
+{% endblock %}

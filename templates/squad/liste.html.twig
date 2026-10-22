@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Squads sport{% endblock %}
+
+{% block entete %}
+    {{ include('partials/_entete.html.twig', {ligne1: 'Bouge avec', ligne2: 'ta squad.'}) }}
+{% endblock %}
+
+{% block contenu %}
+    <nav class="filtres" aria-label="Filtrer par activité">
+        <a class="pill{{ filtre is null ? ' active' }}" href="{{ path('squad_liste', {associations: associations ?: null}) }}">Tout</a>
+        {% for type in types %}
+            <a class="pill{{ filtre == type ? ' active' }}" href="{{ path('squad_liste', {type: type.value, associations: associations ?: null}) }}">{{ type.libelle }}</a>
+        {% endfor %}
+        <a class="pill{{ associations ? ' active' }}" href="{{ path('squad_liste', {type: filtre ? filtre.value : null, associations: associations ? null : 1}) }}">Associations</a>
+    </nav>
+
+    {% if is_granted('ROLE_ETUDIANT') %}
+        <a class="btn btn-primary btn-full" href="{{ path('squad_nouvelle') }}" style="margin-bottom:16px;">Proposer une sortie</a>
+    {% endif %}
+
+    <div class="pile">
+        {% for squad in squads %}
+            <a class="squad-card lien-carte" href="{{ path('squad_detail', {id: squad.id}) }}">
+                <p class="event-meta">{{ squad.type.libelle|upper }} · {{ squad.niveau.libelle }}</p>
+                <h2 class="event-title" style="font-size:var(--fs-6);">{{ squad.titre }}</h2>
+                <p class="texte-doux with-icon">{{ icone('calendrier', 'icon-sm') }}{{ squad.dateHeure|format_datetime(pattern: "EEE d MMM 'à' HH'h'mm", locale: 'fr') }}</p>
+                {% if squad.lieu %}<p class="texte-doux with-icon">{{ icone('epingle', 'icon-sm') }}{{ squad.lieu }}</p>{% endif %}
+                <p class="texte-doux with-icon">{{ icone('personnes', 'icon-sm') }}{{ squad.membres|length }} / {{ squad.quota }}</p>
+            </a>
+        {% else %}
+            <div class="vide">
+                {{ icone('drapeau') }}
+                <p>Pas encore de sortie prévue. Lance la première !</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

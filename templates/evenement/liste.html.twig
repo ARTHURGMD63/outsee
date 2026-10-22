@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Les bons plans{% endblock %}
+
+{% block entete %}
+    {{ include('partials/_entete.html.twig', {
+        surtitre: app.user ? 'Salut ' ~ app.user.prenom,
+        ligne1: 'Les bons plans',
+        ligne2: 'du moment.',
+    }) }}
+{% endblock %}
+
+{% block contenu %}
+    <form method="get" action="{{ path('evenement_liste') }}" role="search" class="form-group">
+        <label for="recherche" class="sr-only">Rechercher une soirée ou un lieu</label>
+        <input type="search" id="recherche" name="q" value="{{ recherche }}" placeholder="Chercher une soirée, un lieu…">
+        {% if filtre %}<input type="hidden" name="type" value="{{ filtre.value }}">{% endif %}
+    </form>
+
+    <nav class="filtres" aria-label="Filtrer par type">
+        <a class="pill{{ filtre is null ? ' active' }}" href="{{ path('evenement_liste', {q: recherche}) }}">Tout</a>
+        {% for type in types %}
+            <a class="pill{{ filtre == type ? ' active' }}" href="{{ path('evenement_liste', {type: type.value, q: recherche}) }}">{{ type.libelle }}</a>
+        {% endfor %}
+    </nav>
+
+    <div class="pile">
+        {% for evenement in evenements %}
+            {{ include('evenement/_carte.html.twig') }}
+        {% else %}
+            <div class="vide">
+                {{ icone('vide') }}
+                <p>Aucun événement ne correspond pour l'instant.</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

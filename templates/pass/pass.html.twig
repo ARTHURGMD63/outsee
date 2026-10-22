@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon pass{% endblock %}
+
+{% block entete %}
+    {{ include('partials/_entete.html.twig', {ligne1: 'Ton pass,', ligne2: 'en poche.'}) }}
+{% endblock %}
+
+{% block contenu %}
+    <div class="wallet-amounts">
+        <div class="amount-card">
+            <div class="label">Économisé</div>
+            <div class="amount-value">{{ stats.economies|format_currency('EUR', locale: 'fr') }}</div>
+            <div class="amount-sub texte-doux">depuis ton inscription</div>
+        </div>
+        <div class="amount-card card-neutre">
+            <div class="label">Sorties</div>
+            <div class="amount-value">{{ stats.sorties }}</div>
+            <div class="amount-sub texte-doux">réservées</div>
+        </div>
+    </div>
+
+    <h2 class="pass-list-header" style="margin-top:24px;">Mes pass</h2>
+    <div class="pile">
+        {% for inscription in pass %}
+            {% set evenement = inscription.evenement %}
+            <article class="qr-wrapper">
+                <div class="qr-header">
+                    <div>
+                        <div class="label" style="font-size:var(--fs-1);opacity:.8;margin-bottom:4px;">
+                            Pass étudiant · {{ inscription.statut.value == 'checkin' ? 'Entrée validée' : 'Actif' }}
+                        </div>
+                        <div class="qr-name">{{ app.user.prenom|upper }} {{ app.user.nom|first|upper }}.</div>
+                    </div>
+                </div>
+                <div class="qr-body revealed">
+                    <div class="qr-pass">{{ qr_pass(inscription) }}</div>
+                    <p style="text-align:center;margin-top:12px;color:#111013;">
+                        <strong>{{ evenement.titre }}</strong><br>
+                        {{ evenement.etablissement.nom }} · {{ evenement.dateHeure|format_datetime(pattern: "EEE d MMM 'à' HH'h'mm", locale: 'fr') }}
+                    </p>
+                </div>
+            </article>
+        {% else %}
+            <div class="vide">
+                {{ icone('billet') }}
+                <p>Aucun pass pour l'instant.</p>
+                <a class="btn btn-primary" href="{{ path('evenement_liste') }}">Explorer les événements</a>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if historique is not empty %}
+        <h2 class="pass-list-header" style="margin-top:24px;">Dernières sorties</h2>
+        {% for inscription in historique %}
+            <div class="pass-item">
+                <div class="pass-item-info">
+                    <div class="pass-item-name">{{ inscription.evenement.titre }}</div>
+                    <div class="pass-item-sub">{{ inscription.evenement.etablissement.nom }} · {{ inscription.evenement.dateHeure|date('d/m/Y') }}</div>
+                </div>
+                {% if inscription.evenement.economie > 0 %}
+                    <div class="pass-item-eco">−{{ inscription.evenement.economie|format_currency('EUR', locale: 'fr') }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

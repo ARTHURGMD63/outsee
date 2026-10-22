@@ -13,6 +13,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/mongodb-odm-bundle": "*",
         "doctrine/orm": "^3.7",
+        "endroid/qr-code": "^6",
         "symfony/asset": "*",
         "symfony/asset-mapper": "*",
         "symfony/console": "7.4.*",
@@ -34,6 +35,8 @@
         "symfony/validator": "*",
         "symfony/yaml": "7.4.*",
         "twig/extra-bundle": "^2.12|^3.0",
+        "twig/intl-extra": "^3.30",
+        "twig/string-extra": "^3.24",
         "twig/twig": "^2.12|^3.0"
     },
     "config": {

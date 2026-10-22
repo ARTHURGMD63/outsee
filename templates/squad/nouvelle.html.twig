@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle squad{% endblock %}
+
+{% block entete %}
+    {{ include('partials/_entete.html.twig', {ligne1: 'Propose', ligne2: 'une sortie.'}) }}
+{% endblock %}
+
+{% block contenu %}
+    {{ form_start(formulaire) }}
+        {{ form_row(formulaire.titre) }}
+        <div class="form-row">
+            {{ form_row(formulaire.type) }}
+            {{ form_row(formulaire.niveau) }}
+        </div>
+        <div class="form-row">
+            {{ form_row(formulaire.dateHeure) }}
+            {{ form_row(formulaire.quota) }}
+        </div>
+        {{ form_row(formulaire.lieu) }}
+        {{ form_row(formulaire.description) }}
+        {{ form_row(formulaire.creeParAssociation) }}
+        <button class="btn btn-primary btn-full" type="submit">Publier</button>
+    {{ form_end(formulaire) }}
+{% endblock %}
