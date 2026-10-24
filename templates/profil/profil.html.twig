@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% set libelles_journal = {
+    connexion: 'Connexion',
+    inscription_compte: 'Création du compte',
+    reservation: 'Réservation',
+    annulation: 'Annulation',
+    entree_validee: 'Entrée validée',
+    squad_rejointe: 'Squad rejointe',
+    avis_depose: 'Avis déposé',
+    evenement_publie: 'Événement publié',
+} %}
+
+{% block entete %}
+    <header class="page-header profil-header">
+        <div class="profil-avatar" aria-hidden="true">{{ app.user.initiale }}</div>
+        <div>
+            <h1 class="profil-name">{{ app.user.nomComplet }}</h1>
+            {% if app.user.ecole %}<p class="profil-school">{{ app.user.ecole }}{{ app.user.promo ? ' · ' ~ app.user.promo }}</p>{% endif %}
+        </div>
+    </header>
+{% endblock %}
+
+{% block contenu %}
+    {% if app.user.estEtudiant %}
+        <section class="card" aria-labelledby="titre-niveau">
+            <div class="ligne">
+                <h2 id="titre-niveau" style="font-size:var(--fs-6);">Niveau {{ niveau }}</h2>
+                <span class="texte-doux">{{ xp }} XP</span>
+            </div>
+            {% set progression = xp_niveau_suivant > xp_niveau_actuel ? ((xp - xp_niveau_actuel) / (xp_niveau_suivant - xp_niveau_actuel) * 100)|round : 0 %}
+            <div class="progress-bar" role="progressbar" aria-valuenow="{{ progression }}" aria-valuemin="0" aria-valuemax="100" aria-label="Progression vers le niveau suivant">
+                <div class="progress-bar-fill dark" style="width:{{ progression }}%"></div>
+            </div>
+            <p class="texte-doux" style="margin-top:8px;">Encore {{ xp_niveau_suivant - xp }} XP avant le niveau {{ niveau + 1 }}.</p>
+        </section>
+
+        <div class="stat-grid" style="margin-top:14px;">
+            <div class="stat-card card"><div class="label">Sorties</div><div class="value">{{ stats.sorties }}</div></div>
+            <div class="stat-card card"><div class="label">Squads</div><div class="value">{{ stats.squads }}</div></div>
+            <div class="stat-card card"><div class="label">Avis</div><div class="value">{{ stats.avis }}</div></div>
+        </div>
+
+        <h2 class="pass-list-header">Badges</h2>
+        <div class="interets-liste">
+            {% for obtenu in badges %}
+                <span class="interest-tag with-icon" title="{{ obtenu.badge.description }}">{{ icone(obtenu.badge.icon ?? 'etoile', 'icon-sm') }}{{ obtenu.badge.nom }}</span>
+            {% else %}
+                <p class="texte-doux">Réserve ta première sortie pour débloquer un badge.</p>
+            {% endfor %}
+        </div>
+
+        {% if app.user.interets is not empty %}
+            <h2 class="pass-list-header" style="margin-top:20px;">Centres d'intérêt</h2>
+            <div class="interets-liste">
+                {% for interet in app.user.interets %}<span class="interest-tag">{{ interet }}</span>{% endfor %}
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% if activite is not empty %}
+        <h2 class="pass-list-header" style="margin-top:20px;">Activité récente</h2>
+        {% for entree in activite %}
+            <div class="pass-item">
+                <div class="pass-item-info">
+                    <div class="pass-item-name">{{ libelles_journal[entree.action] ?? entree.action }}</div>
+                    <div class="pass-item-sub">{{ entree.creeLe|format_datetime(pattern: "d MMM 'à' HH'h'mm", locale: 'fr') }}</div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="pile" style="margin-top:24px;">
+        <a class="btn btn-full" href="{{ path('profil_modifier') }}">Modifier mon profil</a>
+        <a class="btn btn-full" href="{{ path('deconnexion') }}">Se déconnecter</a>
+    </div>
+
+    <details style="margin-top:32px;">
+        <summary class="texte-doux">Supprimer mon compte</summary>
+        <form method="post" action="{{ path('profil_supprimer') }}" onsubmit="return confirm('Supprimer définitivement ton compte ?');" style="margin-top:12px;">
+            <input type="hidden" name="_token" value="{{ csrf_token('supprimer-compte') }}">
+            <p class="texte-doux">Ton nom, ton e-mail et tes informations seront effacés. Cette action est définitive.</p>
+            <button class="btn btn-full" type="submit" style="margin-top:10px;">Supprimer définitivement</button>
+        </form>
+    </details>
+{% endblock %}

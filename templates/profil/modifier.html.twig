@@ -1,0 +1,27 @@
+{% extends app.user.estPartenaire ? 'partenaire/base.html.twig' : 'base.html.twig' %}
+
+{% block title %}Modifier mon profil{% endblock %}
+
+{% block entete %}
+    {{ include('partials/_entete.html.twig', {ligne1: 'Ton profil,', ligne2: 'à ta façon.'}) }}
+{% endblock %}
+
+{% block contenu %}
+    {{ form_start(formulaire) }}
+        <div class="form-row">
+            {{ form_row(formulaire.prenom) }}
+            {{ form_row(formulaire.nom) }}
+        </div>
+        {% if formulaire.ecole is defined %}
+            {{ form_row(formulaire.ville) }}
+            <div class="form-row">
+                {{ form_row(formulaire.ecole) }}
+                {{ form_row(formulaire.promo) }}
+            </div>
+            {{ form_row(formulaire.interets) }}
+            {{ form_row(formulaire.comptePrive) }}
+        {% endif %}
+        {{ form_row(formulaire.theme) }}
+        <button class="btn btn-primary btn-full" type="submit">Enregistrer</button>
+    {{ form_end(formulaire) }}
+{% endblock %}
