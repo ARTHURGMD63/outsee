@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{# L'espace pro est « le jour » de la charte : toujours en clair. #}
+{% set univers = 'pro' %}
+
+{% block body %}
+    {% set route = app.current_route %}
+    <header class="barre-pro">
+        {{ include('partials/_marque.html.twig', {suffixe: is_granted('ROLE_ADMIN') ? 'admin' : 'pro', lien: path('accueil')}) }}
+        <nav aria-label="Espace partenaire">
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('admin_tableau_de_bord') }}"{{ route starts with 'admin' ? ' aria-current="page"' }}>Tableau de bord</a>
+            {% else %}
+                <a href="{{ path('partenaire_tableau_de_bord') }}"{{ route == 'partenaire_tableau_de_bord' ? ' aria-current="page"' }}>Mes soirées</a>
+                <a href="{{ path('partenaire_evenement_nouveau') }}"{{ route == 'partenaire_evenement_nouveau' ? ' aria-current="page"' }}>Publier</a>
+                <a href="{{ path('partenaire_scan') }}"{{ route == 'partenaire_scan' ? ' aria-current="page"' }}>Scanner</a>
+            {% endif %}
+            <a href="{{ path('profil_modifier') }}">Compte</a>
+            <a href="{{ path('deconnexion') }}">Déconnexion</a>
+        </nav>
+    </header>
+
+    <div class="app-shell">
+        {% block entete %}{% endblock %}
+        <main id="main-content" class="page-content">
+            {{ include('partials/_messages.html.twig') }}
+            {% block contenu %}{% endblock %}
+        </main>
+    </div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'partenaire/base.html.twig' %}
+
+{% block title %}Mes soirées{% endblock %}
+
+{% block entete %}
+    {{ include('partials/_entete.html.twig', {surtitre: etablissement.nom, ligne1: 'Tes prochaines', ligne2: 'soirées.'}) }}
+{% endblock %}
+
+{% block contenu %}
+    {% if client and client.statut.value == 'essai' and client.essaiJusquAu %}
+        <p class="form-success">Période d'essai {{ client.offre.libelle }} jusqu'au {{ client.essaiJusquAu|date('d/m/Y') }}.</p>
+    {% endif %}
+
+    <div class="ligne" style="margin-bottom:16px;">
+        <a class="btn btn-primary" href="{{ path('partenaire_evenement_nouveau') }}">Publier une soirée</a>
+        <a class="btn" href="{{ path('partenaire_scan') }}">{{ icone('appareil', 'icon-sm') }} Scanner un pass</a>
+    </div>
+
+    <div class="pile">
+        {% for evenement in evenements %}
+            {% set prises = places[evenement.id] %}
+            <article class="card">
+                <p class="event-meta">{{ evenement.dateHeure|format_datetime(pattern: "EEE d MMM 'à' HH'h'mm", locale: 'fr') }}</p>
+                <h2 class="event-title" style="font-size:var(--fs-6);">{{ evenement.titre }}</h2>
+                <p class="texte-doux">{{ prises }} / {{ evenement.quota }} réservations</p>
+                <div class="progress-bar" aria-hidden="true">
+                    <div class="progress-bar-fill dark" style="width:{{ evenement.quota > 0 ? min(100, (prises / evenement.quota * 100)|round) : 0 }}%"></div>
+                </div>
+                {% if evenement.sponsoriseActif %}
+                    <p class="badge badge-sponsorise" style="margin-top:10px;">Mis en avant jusqu'au {{ evenement.sponsorJusquAu|date('d/m à H\\hi') }}</p>
+                {% endif %}
+                <div class="ligne" style="margin-top:12px;">
+                    <a href="{{ path('partenaire_participants', {id: evenement.id}) }}">Participants</a>
+                    <a href="{{ path('partenaire_evenement_modifier', {id: evenement.id}) }}">Modifier</a>
+                    {% if not evenement.sponsoriseActif %}
+                        <form method="post" action="{{ path('partenaire_sponsoriser', {id: evenement.id}) }}" class="ligne">
+                            <input type="hidden" name="_token" value="{{ csrf_token('sponsoriser') }}">
+                            <label class="sr-only" for="formule-{{ evenement.id }}">Formule</label>
+                            <select id="formule-{{ evenement.id }}" name="formule">
+                                {% for formule in enum_cases('App\\Enum\\FormuleSponsoring') %}
+                                    <option value="{{ formule.value }}">{{ formule.libelle }} · {{ formule.tarif|format_currency('EUR', locale: 'fr') }}</option>
+                                {% endfor %}
+                            </select>
+                            <button class="btn" type="submit">Mettre en avant</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </article>
+        {% else %}
+            <div class="vide">
+                {{ icone('calendrier') }}
+                <p>Aucune soirée à venir. Publie la prochaine pour la montrer aux étudiants.</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

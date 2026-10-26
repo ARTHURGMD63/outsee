@@ -1,0 +1,34 @@
+{% extends 'partenaire/base.html.twig' %}
+
+{% block title %}Scanner un pass{% endblock %}
+
+{% block entete %}
+    {{ include('partials/_entete.html.twig', {ligne1: 'Scanne', ligne2: 'les pass.'}) }}
+{% endblock %}
+
+{% block contenu %}
+    {% if resultat %}
+        {% if resultat.succes %}
+            <div class="resultat-scan resultat-scan--ok" role="status">
+                {{ icone('valide') }}
+                <p><strong>{{ resultat.inscription.utilisateur.prenom }} {{ resultat.inscription.utilisateur.nom|first }}.</strong> peut entrer.</p>
+                <p>{{ resultat.inscription.evenement.titre }}</p>
+            </div>
+        {% else %}
+            <div class="resultat-scan resultat-scan--refus" role="alert">
+                {{ icone('echec') }}
+                <p>{{ resultat.message }}</p>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <form method="post" action="{{ path('partenaire_scan') }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('scan') }}">
+        <div class="form-group">
+            <label for="code">Code du pass</label>
+            <input type="text" id="code" name="code" required autofocus autocomplete="off" placeholder="outsee:…">
+            <p class="aide-champ">Un lecteur de QR code branché sur l'ordinateur remplit ce champ tout seul.</p>
+        </div>
+        <button class="btn btn-primary btn-full" type="submit">Valider l'entrée</button>
+    </form>
+{% endblock %}

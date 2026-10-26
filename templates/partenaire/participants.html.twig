@@ -1,0 +1,28 @@
+{% extends 'partenaire/base.html.twig' %}
+
+{% block title %}Participants{% endblock %}
+
+{% block entete %}
+    {{ include('partials/_entete.html.twig', {surtitre: evenement.titre, ligne1: 'Qui vient', ligne2: 'ce soir ?'}) }}
+{% endblock %}
+
+{% block contenu %}
+    <p class="texte-doux" style="margin-bottom:12px;">{{ participants|length }} réservation{{ participants|length > 1 ? 's' }} sur {{ evenement.quota }} places.</p>
+
+    <table class="tableau">
+        <thead>
+            <tr><th scope="col">Nom</th><th scope="col">École</th><th scope="col">Statut</th></tr>
+        </thead>
+        <tbody>
+            {% for inscription in participants %}
+                <tr>
+                    <td>{{ inscription.utilisateur.prenom }} {{ inscription.utilisateur.nom|first }}.</td>
+                    <td>{{ inscription.utilisateur.ecole ?? '—' }}</td>
+                    <td>{{ inscription.statut.value == 'checkin' ? 'Entré à ' ~ inscription.checkinLe|date('H\\hi') : 'Réservé' }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="3" class="texte-doux">Pas encore de réservation.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

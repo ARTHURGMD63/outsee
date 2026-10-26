@@ -1,0 +1,34 @@
+{% extends 'partenaire/base.html.twig' %}
+
+{% block title %}{{ evenement ? 'Modifier la soirée' : 'Publier une soirée' }}{% endblock %}
+
+{% block entete %}
+    {{ include('partials/_entete.html.twig', evenement
+        ? {ligne1: 'Modifier', ligne2: evenement.titre ~ '.'}
+        : {ligne1: 'Publie ta', ligne2: 'prochaine soirée.'}) }}
+{% endblock %}
+
+{% block contenu %}
+    {{ form_start(formulaire) }}
+        {{ form_row(formulaire.titre) }}
+        {{ form_row(formulaire.description) }}
+        <div class="form-row">
+            {{ form_row(formulaire.type) }}
+            {{ form_row(formulaire.styleMusique) }}
+        </div>
+        <div class="form-row">
+            {{ form_row(formulaire.dateHeure) }}
+            {{ form_row(formulaire.dateFin) }}
+        </div>
+        {{ form_row(formulaire.lieu) }}
+        <div class="form-row">
+            {{ form_row(formulaire.quota) }}
+            {{ form_row(formulaire.prixNormal) }}
+        </div>
+        <div class="form-row">
+            {{ form_row(formulaire.reduction) }}
+            {{ form_row(formulaire.gratuit) }}
+        </div>
+        <button class="btn btn-primary btn-full" type="submit">{{ evenement ? 'Enregistrer' : 'Publier' }}</button>
+    {{ form_end(formulaire) }}
+{% endblock %}
