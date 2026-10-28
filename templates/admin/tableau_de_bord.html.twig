@@ -1,0 +1,52 @@
+{% extends 'partenaire/base.html.twig' %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% set libelles_journal = {
+    connexion: 'Connexions',
+    inscription_compte: 'Comptes créés',
+    reservation: 'Réservations',
+    annulation: 'Annulations',
+    entree_validee: 'Entrées validées',
+    squad_rejointe: 'Squads rejointes',
+    avis_depose: 'Avis déposés',
+    evenement_publie: 'Événements publiés',
+    suppression_compte: 'Comptes supprimés',
+} %}
+
+{% block entete %}
+    {{ include('partials/_entete.html.twig', {ligne1: 'Outsee', ligne2: 'en chiffres.'}) }}
+{% endblock %}
+
+{% block contenu %}
+    <h2 class="pass-list-header">Base relationnelle (MariaDB)</h2>
+    <div class="stat-grid">
+        <div class="stat-card card"><div class="label">Étudiants</div><div class="value">{{ indicateurs.etudiants }}</div></div>
+        <div class="stat-card card"><div class="label">Partenaires</div><div class="value">{{ indicateurs.partenaires }}</div></div>
+        <div class="stat-card card"><div class="label">Soirées à venir</div><div class="value">{{ indicateurs.evenements_a_venir }}</div></div>
+        <div class="stat-card card"><div class="label">Réservations 30 j</div><div class="value">{{ indicateurs.reservations_30j }}</div></div>
+        <div class="stat-card card"><div class="label">Présence</div><div class="value">{{ indicateurs.taux_presence is null ? '—' : indicateurs.taux_presence ~ ' %' }}</div></div>
+        <div class="stat-card card"><div class="label">MRR</div><div class="value">{{ indicateurs.mrr|format_currency('EUR', {fraction_digit: 0}, locale: 'fr') }}</div></div>
+    </div>
+    <p class="texte-doux">Trésorerie réglée : {{ indicateurs.tresorerie|format_currency('EUR', locale: 'fr') }}</p>
+
+    <h2 class="pass-list-header" style="margin-top:24px;">Pipeline commercial</h2>
+    <table class="tableau">
+        <tbody>
+            {% for etape, total in pipeline %}
+                <tr><th scope="row">{{ etape }}</th><td>{{ total }}</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="pass-list-header" style="margin-top:24px;">Activité des 30 derniers jours (MongoDB)</h2>
+    <table class="tableau">
+        <tbody>
+            {% for action, total in activite %}
+                <tr><th scope="row">{{ libelles_journal[action] ?? action }}</th><td>{{ total }}</td></tr>
+            {% else %}
+                <tr><td class="texte-doux">Aucune activité enregistrée.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
