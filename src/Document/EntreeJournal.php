@@ -27,7 +27,7 @@ class EntreeJournal
     public const DUREE_CONSERVATION = 365 * 24 * 3600;
 
     #[ODM\Id]
-    private ?string $id = null;
+    private ?string $id = null; // @phpstan-ignore property.unusedType (MongoDB attribue l'identifiant à l'enregistrement)
 
     #[ODM\Field(type: 'date_immutable')]
     private \DateTimeImmutable $creeLe;
