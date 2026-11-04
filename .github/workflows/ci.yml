@@ -13,7 +13,7 @@ jobs:
     name: Style et analyse statique
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -56,7 +56,7 @@ jobs:
       DATABASE_URL: mysql://root:root@127.0.0.1:3306/outsee?serverVersion=11.4.0-MariaDB&charset=utf8mb4
       MONGODB_URI: mongodb://127.0.0.1:27017
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: shivammathur/setup-php@v2
         with:
